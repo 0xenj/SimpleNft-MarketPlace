@@ -172,8 +172,8 @@ contract Enzo_test_SimpleNftMarketplace is Helper {
   //   helper_mint_approve721(address(nft2), address(1), 1);
 
   //   assertEq(marketplace.transactionFee(), 0);
-  // Errors.verify_revertCall(RevertStatus.CallerNotAdmin);
-  // assertTrue(marketplace.changeTransactionFee(marketplace.BASE_TRANSACTION_FEE()));
+  //   Errors.verify_revertCall(RevertStatus.CallerNotAdmin);
+  //   assertTrue(marketplace.changeTransactionFee(marketplace.BASE_TRANSACTION_FEE()));
 
   // vm.prank(ADMIN);
   // assertTrue(marketplace.changeTransactionFee(marketplace.BASE_TRANSACTION_FEE()));
@@ -190,4 +190,19 @@ contract Enzo_test_SimpleNftMarketplace is Helper {
 
   // assertEq(marketplace.accumulatedFees(), 1);
   // }
+
+  function test_SimpleNftMarketplace_basic_createListing_and_buyListing_signature() public {
+    helper_changeToken(ADMIN, IERC20Upgradeable(address(token)));
+    helper_changeSupportedContract(ADMIN, address(nft1), true);
+
+    helper_mint_approve721(address(nft1), SIGNER1, 1);
+
+    helper_generateSignatureAndCreateListing(address(1), address(nft1), 1, 100, SIGNER1_PRIVATEKEY);
+
+    help_moveBlockAndTimeFoward(1, 100);
+
+    helper_mint_approve20(SIGNER2, 100);
+
+    helper_generateSignatureAndBuyListing(address(2), 0, SIGNER2_PRIVATEKEY);
+  }
 }
